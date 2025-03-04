@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "X Content Filter",
+  "version": "1.0.0",
+  "description": "Filters unwanted content from X",
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://*.x.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "icons/icon_48.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.x.com/*"
+      ],
+      "js": ["contentScript.js"]
+    }
+  ]
+} 
