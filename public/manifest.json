@@ -5,10 +5,12 @@
   "description": "Filters unwanted content from X",
   "permissions": [
     "activeTab",
-    "tabs"
+    "tabs",
+    "storage"
   ],
   "host_permissions": [
-    "https://*.x.com/*"
+    "https://*.x.com/*",
+    "https://api.openai.com/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -21,7 +23,8 @@
       "matches": [
         "https://*.x.com/*"
       ],
-      "js": ["contentScript.js"]
+      "js": ["contentScript.js"],
+      "run_at": "document_idle"
     }
   ]
 } 

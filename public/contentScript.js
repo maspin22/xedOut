@@ -1,0 +1,384 @@
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/*!******************************!*\
+  !*** ./src/contentScript.js ***!
+  \******************************/
+
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+var isVideoRemovalActive = false;
+var isPoliticalFilterActive = false;
+var observer = null;
+var filteredPosts = 0; // Counter for filtered posts
+var processedPosts = new Set(); // Track processed post IDs
+var processingInProgress = false; // Flag to prevent concurrent processing
+var debugPanelVisible = false; // Control debug panel visibility
+function analyzePoliticalContent(_x) {
+  return _analyzePoliticalContent.apply(this, arguments);
+}
+/**
+ * Searches for video elements within the page.
+ * When found inside a post container, the post is hidden.
+ */
+function _analyzePoliticalContent() {
+  _analyzePoliticalContent = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(text) {
+    var apiKey, prompt, response, data, result;
+    return _regeneratorRuntime().wrap(function _callee$(_context) {
+      while (1) switch (_context.prev = _context.next) {
+        case 0:
+          _context.prev = 0;
+          _context.next = 3;
+          return new Promise(function (resolve) {
+            chrome.storage.local.get(['openaiKey'], function (result) {
+              resolve(result.openaiKey);
+            });
+          });
+        case 3:
+          apiKey = _context.sent;
+          if (apiKey) {
+            _context.next = 7;
+            break;
+          }
+          console.log('[X Filter] No API key found');
+          return _context.abrupt("return", false);
+        case 7:
+          prompt = "Analyze if the following content is political in nature. Respond with only \"true\" or \"false\":\n    \"".concat(text, "\"");
+          _context.next = 10;
+          return fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': "Bearer ".concat(apiKey)
+            },
+            body: JSON.stringify({
+              model: "gpt-4o-mini",
+              messages: [{
+                role: "user",
+                content: prompt
+              }],
+              temperature: 0.7
+            })
+          });
+        case 10:
+          response = _context.sent;
+          _context.next = 13;
+          return response.json();
+        case 13:
+          data = _context.sent;
+          result = data.choices[0].message.content.toLowerCase().trim();
+          return _context.abrupt("return", result === 'true');
+        case 18:
+          _context.prev = 18;
+          _context.t0 = _context["catch"](0);
+          console.error('[X Filter] Error analyzing content:', _context.t0);
+          return _context.abrupt("return", false);
+        case 22:
+        case "end":
+          return _context.stop();
+      }
+    }, _callee, null, [[0, 18]]);
+  }));
+  return _analyzePoliticalContent.apply(this, arguments);
+}
+function hideVideoPosts() {
+  // Look for video elements
+  var videoElements = document.querySelectorAll('video');
+  videoElements.forEach(function (videoElement) {
+    // Assume that the post is housed in an <article> element
+    var postContainer = videoElement.closest('article');
+    if (postContainer) {
+      // Get a unique identifier for the post
+      var postId = getPostId(postContainer);
+
+      // Skip if already processed
+      if (processedPosts.has(postId)) return;
+
+      // Mark as processed
+      processedPosts.add(postId);
+
+      // Hide the post
+      postContainer.style.display = 'none';
+      console.log('[X Filter] Hiding post with video');
+    }
+  });
+}
+
+// Get a unique identifier for a post
+function getPostId(postElement) {
+  // Try to get the post ID from data attributes
+  var idAttribute = postElement.getAttribute('data-testid') || '';
+  var articleId = postElement.getAttribute('aria-labelledby') || '';
+
+  // If we have an ID attribute, use it
+  if (idAttribute || articleId) {
+    return "".concat(idAttribute, "-").concat(articleId);
+  }
+
+  // Fallback to using the post's content as an ID
+  var textContent = postElement.textContent.substring(0, 100);
+  return textContent.replace(/\s+/g, '');
+}
+function processPoliticalPosts() {
+  return _processPoliticalPosts.apply(this, arguments);
+}
+/**
+ * Process all posts on the page based on active filters
+ */
+function _processPoliticalPosts() {
+  _processPoliticalPosts = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+    var posts, _iterator, _step, post, postId, textContent, isPolitical;
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
+        case 0:
+          // Find all posts (articles) on the page
+          posts = document.querySelectorAll('article'); // Process each post for political content
+          _iterator = _createForOfIteratorHelper(posts);
+          _context2.prev = 2;
+          _iterator.s();
+        case 4:
+          if ((_step = _iterator.n()).done) {
+            _context2.next = 19;
+            break;
+          }
+          post = _step.value;
+          // Get a unique identifier for the post
+          postId = getPostId(post); // Skip posts we've already processed
+          if (!processedPosts.has(postId)) {
+            _context2.next = 9;
+            break;
+          }
+          return _context2.abrupt("continue", 17);
+        case 9:
+          // Get the text content of the post
+          textContent = post.textContent; // Skip very short posts
+          if (!(textContent.length < 10)) {
+            _context2.next = 12;
+            break;
+          }
+          return _context2.abrupt("continue", 17);
+        case 12:
+          // Mark as processed before analysis to prevent duplicate processing
+          processedPosts.add(postId);
+          _context2.next = 15;
+          return analyzePoliticalContent(textContent);
+        case 15:
+          isPolitical = _context2.sent;
+          if (isPolitical) {
+            filteredPosts++;
+            // Hide the post
+            post.style.display = 'none';
+            console.log('[X Filter] Hiding political post');
+            console.log('[X Filter] Analyzing text:', textContent.substring(0, 100) + '...');
+          }
+        case 17:
+          _context2.next = 4;
+          break;
+        case 19:
+          _context2.next = 24;
+          break;
+        case 21:
+          _context2.prev = 21;
+          _context2.t0 = _context2["catch"](2);
+          _iterator.e(_context2.t0);
+        case 24:
+          _context2.prev = 24;
+          _iterator.f();
+          return _context2.finish(24);
+        case 27:
+        case "end":
+          return _context2.stop();
+      }
+    }, _callee2, null, [[2, 21, 24, 27]]);
+  }));
+  return _processPoliticalPosts.apply(this, arguments);
+}
+function processAllPosts() {
+  return _processAllPosts.apply(this, arguments);
+}
+/**
+ * Starts the content filtering functionality.
+ */
+function _processAllPosts() {
+  _processAllPosts = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
+        case 0:
+          if (!processingInProgress) {
+            _context3.next = 2;
+            break;
+          }
+          return _context3.abrupt("return");
+        case 2:
+          processingInProgress = true;
+          _context3.prev = 3;
+          if (isVideoRemovalActive) {
+            hideVideoPosts();
+          }
+          if (!isPoliticalFilterActive) {
+            _context3.next = 8;
+            break;
+          }
+          _context3.next = 8;
+          return processPoliticalPosts();
+        case 8:
+          // Update debug panel if visible
+          if (debugPanelVisible) {
+            updateDebugPanel();
+          }
+        case 9:
+          _context3.prev = 9;
+          processingInProgress = false;
+          return _context3.finish(9);
+        case 12:
+        case "end":
+          return _context3.stop();
+      }
+    }, _callee3, null, [[3,, 9, 12]]);
+  }));
+  return _processAllPosts.apply(this, arguments);
+}
+function startObserver() {
+  // Initial processing
+  processAllPosts();
+
+  // Set up a MutationObserver to watch for new posts being loaded dynamically.
+  if (!observer) {
+    observer = new MutationObserver(function (mutations) {
+      // Throttle processing to reduce performance impact
+      if (!processingInProgress) {
+        setTimeout(function () {
+          processAllPosts();
+        }, 1000);
+      }
+    });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    console.log('[X Filter] Observer started');
+  }
+}
+
+/**
+ * Stops the active filtering functionality.
+ */
+function stopObserver() {
+  // Stop the MutationObserver if active
+  if (observer) {
+    observer.disconnect();
+    observer = null;
+    console.log('[X Filter] Observer stopped');
+  }
+}
+
+// Add a debug panel to the page
+function addDebugPanel() {
+  // Create a toggle button instead of always showing the panel
+  var toggleButton = document.createElement('button');
+  toggleButton.id = 'x-filter-debug-toggle';
+  toggleButton.textContent = 'X Filter';
+  toggleButton.style.position = 'fixed';
+  toggleButton.style.bottom = '10px';
+  toggleButton.style.right = '10px';
+  toggleButton.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+  toggleButton.style.color = 'white';
+  toggleButton.style.padding = '5px 10px';
+  toggleButton.style.borderRadius = '5px';
+  toggleButton.style.zIndex = '9999';
+  toggleButton.style.fontSize = '12px';
+  toggleButton.style.border = 'none';
+  toggleButton.style.cursor = 'pointer';
+  document.body.appendChild(toggleButton);
+
+  // Create the debug panel (hidden by default)
+  var panel = document.createElement('div');
+  panel.id = 'x-filter-debug-panel';
+  panel.style.position = 'fixed';
+  panel.style.bottom = '45px';
+  panel.style.right = '10px';
+  panel.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+  panel.style.color = 'white';
+  panel.style.padding = '10px';
+  panel.style.borderRadius = '5px';
+  panel.style.zIndex = '9999';
+  panel.style.fontSize = '12px';
+  panel.style.maxWidth = '300px';
+  panel.style.display = 'none';
+  panel.innerHTML = "\n    <h3 style=\"margin: 0 0 5px 0;\">X Filter Debug</h3>\n    <div id=\"x-filter-debug-content\">\n      <p>Video Filter: <span id=\"video-filter-status\">Inactive</span></p>\n      <p>Political Filter: <span id=\"political-filter-status\">Inactive</span></p>\n      <p>Posts Filtered: <span id=\"filtered-count\">0</span></p>\n    </div>\n  ";
+  document.body.appendChild(panel);
+
+  // Toggle debug panel when button is clicked
+  toggleButton.addEventListener('click', function () {
+    debugPanelVisible = !debugPanelVisible;
+    panel.style.display = debugPanelVisible ? 'block' : 'none';
+
+    // Update panel if it's now visible
+    if (debugPanelVisible) {
+      updateDebugPanel();
+    }
+  });
+}
+
+// Update the debug panel with current stats
+function updateDebugPanel() {
+  document.getElementById('video-filter-status').textContent = isVideoRemovalActive ? 'Active' : 'Inactive';
+  document.getElementById('political-filter-status').textContent = isPoliticalFilterActive ? 'Active' : 'Inactive';
+  document.getElementById('filtered-count').textContent = filteredPosts;
+}
+
+// Listen for messages from the popup
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.action === 'getState') {
+    sendResponse({
+      videoActive: isVideoRemovalActive,
+      politicalActive: isPoliticalFilterActive
+    });
+  } else if (request.action === 'toggleVideoRemoval') {
+    isVideoRemovalActive = !isVideoRemovalActive;
+    console.log("[X Filter] Video removal ".concat(isVideoRemovalActive ? 'enabled' : 'disabled'));
+
+    // Start or stop the observer based on whether any filter is active
+    if (isVideoRemovalActive || isPoliticalFilterActive) {
+      startObserver();
+    } else {
+      stopObserver();
+    }
+    sendResponse({
+      success: true,
+      active: isVideoRemovalActive
+    });
+  } else if (request.action === 'togglePoliticalFilter') {
+    isPoliticalFilterActive = !isPoliticalFilterActive;
+    console.log("[X Filter] Political filter ".concat(isPoliticalFilterActive ? 'enabled' : 'disabled'));
+
+    // Start or stop the observer based on whether any filter is active
+    if (isVideoRemovalActive || isPoliticalFilterActive) {
+      startObserver();
+    } else {
+      stopObserver();
+    }
+    sendResponse({
+      success: true,
+      active: isPoliticalFilterActive
+    });
+  }
+  return true; // Indicates async response
+});
+
+// Initial setup when the script loads
+console.log('[X Content Filter] Content script loaded');
+addDebugPanel();
+
+// Process posts on initial load with a small delay
+setTimeout(function () {
+  processAllPosts();
+}, 2000);
+/******/ })()
+;
+//# sourceMappingURL=contentScript.js.map

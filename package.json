@@ -11,7 +11,10 @@
     "format": "prettier --write --ignore-unknown \"{config,public,src}/**/*.{html,css,js,ts,json}\""
   },
   "devDependencies": {
+    "@babel/core": "^7.26.9",
+    "@babel/preset-env": "^7.26.9",
     "adm-zip": "^0.5.16",
+    "babel-loader": "^10.0.0",
     "copy-webpack-plugin": "^10.2.4",
     "css-loader": "^6.11.0",
     "file-loader": "^6.2.0",

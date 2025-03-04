@@ -1,18 +1,43 @@
-'use strict';
+const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
 
-const { merge } = require('webpack-merge');
-
-const common = require('./webpack.common.js');
-const PATHS = require('./paths');
-
-// Merge webpack configuration files
-const config = (env, argv) =>
-  merge(common, {
-    entry: {
-      popup: PATHS.src + '/popup.js',
-      contentScript: PATHS.src + '/contentScript.js',
-    },
-    devtool: argv.mode === 'production' ? false : 'source-map',
-  });
-
-module.exports = config;
+module.exports = {
+  mode: process.env.NODE_ENV || 'development',
+  devtool: 'source-map',
+  entry: {
+    popup: path.resolve(__dirname, '../src/popup.js'),
+    contentScript: path.resolve(__dirname, '../src/contentScript.js')
+  },
+  output: {
+    path: path.resolve(__dirname, '../public'),
+    filename: '[name].js'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        }
+      }
+    ]
+  },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { 
+          from: path.resolve(__dirname, '../src/popup.html'), 
+          to: path.resolve(__dirname, '../public/popup.html')
+        },
+        { 
+          from: path.resolve(__dirname, '../src/popup.css'), 
+          to: path.resolve(__dirname, '../public/popup.css')
+        }
+      ]
+    })
+  ]
+};
