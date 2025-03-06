@@ -7,19 +7,21 @@
   </head>
   <body>
     <div class="app">
-      <h1>X Content Filter</h1>
-      <button id="toggleBtn" class="button">Enable Video Removal</button>
-      <button id="togglePoliticalBtn" class="button political">Enable Political Filter</button>
+      <h1>X Filter</h1>
+      <div class="button-container">
+        <button id="toggleBtn" class="button">Enable Video Removal</button>
+        <button id="togglePoliticalBtn" class="button political">Enable Political Filter</button>
+      </div>
       <div class="api-key-section">
         <input 
           type="password" 
           id="apiKeyInput" 
           class="api-input" 
-          placeholder="Enter OpenAI API Key"
+          placeholder="OpenAI API Key"
         >
-        <button id="saveApiKey" class="button save-key">Save Key</button>
+        <button id="saveApiKey" class="button save-key">Save</button>
       </div>
-      <p class="info">Posts containing filtered content will be hidden from your timeline.</p>
+      <p class="info">Filtered content will be hidden from your timeline.</p>
     </div>
     <script src="popup.js"></script>
   </body>

@@ -15,7 +15,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 var isVideoRemovalActive = false;
 var isPoliticalFilterActive = false;
 var observer = null;
-var filteredPosts = 0; // Counter for filtered posts
+var politicalFilteredPosts = 0; // Counter for political filtered posts
+var videoFilteredPosts = 0; // Counter for video filtered posts
 var processedPosts = new Set(); // Track processed post IDs
 var processingInProgress = false; // Flag to prevent concurrent processing
 var debugPanelVisible = false; // Control debug panel visibility
@@ -104,7 +105,13 @@ function hideVideoPosts() {
 
       // Hide the post
       postContainer.style.display = 'none';
+      videoFilteredPosts++; // Increment video filtered count
       console.log('[X Filter] Hiding post with video');
+
+      // Update debug panel if visible
+      if (debugPanelVisible) {
+        updateDebugPanel();
+      }
     }
   });
 }
@@ -170,11 +177,15 @@ function _processPoliticalPosts() {
         case 15:
           isPolitical = _context2.sent;
           if (isPolitical) {
-            filteredPosts++;
+            politicalFilteredPosts++; // Increment political filtered count
             // Hide the post
             post.style.display = 'none';
             console.log('[X Filter] Hiding political post');
-            console.log('[X Filter] Analyzing text:', textContent.substring(0, 100) + '...');
+
+            // Update debug panel if visible
+            if (debugPanelVisible) {
+              updateDebugPanel();
+            }
           }
         case 17:
           _context2.next = 4;
@@ -310,7 +321,7 @@ function addDebugPanel() {
   panel.style.fontSize = '12px';
   panel.style.maxWidth = '300px';
   panel.style.display = 'none';
-  panel.innerHTML = "\n    <h3 style=\"margin: 0 0 5px 0;\">X Filter Debug</h3>\n    <div id=\"x-filter-debug-content\">\n      <p>Video Filter: <span id=\"video-filter-status\">Inactive</span></p>\n      <p>Political Filter: <span id=\"political-filter-status\">Inactive</span></p>\n      <p>Posts Filtered: <span id=\"filtered-count\">0</span></p>\n    </div>\n  ";
+  panel.innerHTML = "\n    <h3 style=\"margin: 0 0 5px 0;\">X Filter Debug</h3>\n    <div id=\"x-filter-debug-content\">\n      <p>Video Filter: <span id=\"video-filter-status\">Inactive</span></p>\n      <p>Political Filter: <span id=\"political-filter-status\">Inactive</span></p>\n      <p>Videos Filtered: <span id=\"video-filtered-count\">0</span></p>\n      <p>Political Posts Filtered: <span id=\"political-filtered-count\">0</span></p>\n      <p>Total Posts Filtered: <span id=\"total-filtered-count\">0</span></p>\n    </div>\n  ";
   document.body.appendChild(panel);
 
   // Toggle debug panel when button is clicked
@@ -327,9 +338,16 @@ function addDebugPanel() {
 
 // Update the debug panel with current stats
 function updateDebugPanel() {
-  document.getElementById('video-filter-status').textContent = isVideoRemovalActive ? 'Active' : 'Inactive';
-  document.getElementById('political-filter-status').textContent = isPoliticalFilterActive ? 'Active' : 'Inactive';
-  document.getElementById('filtered-count').textContent = filteredPosts;
+  var videoStatus = document.getElementById('video-filter-status');
+  var politicalStatus = document.getElementById('political-filter-status');
+  var videoCount = document.getElementById('video-filtered-count');
+  var politicalCount = document.getElementById('political-filtered-count');
+  var totalCount = document.getElementById('total-filtered-count');
+  if (videoStatus) videoStatus.textContent = isVideoRemovalActive ? 'Active' : 'Inactive';
+  if (politicalStatus) politicalStatus.textContent = isPoliticalFilterActive ? 'Active' : 'Inactive';
+  if (videoCount) videoCount.textContent = videoFilteredPosts;
+  if (politicalCount) politicalCount.textContent = politicalFilteredPosts;
+  if (totalCount) totalCount.textContent = videoFilteredPosts + politicalFilteredPosts;
 }
 
 // Listen for messages from the popup
@@ -349,6 +367,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     } else {
       stopObserver();
     }
+
+    // Update debug panel if visible
+    if (debugPanelVisible) {
+      updateDebugPanel();
+    }
     sendResponse({
       success: true,
       active: isVideoRemovalActive
@@ -362,6 +385,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       startObserver();
     } else {
       stopObserver();
+    }
+
+    // Update debug panel if visible
+    if (debugPanelVisible) {
+      updateDebugPanel();
     }
     sendResponse({
       success: true,

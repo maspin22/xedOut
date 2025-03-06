@@ -3,7 +3,8 @@
 let isVideoRemovalActive = false;
 let isPoliticalFilterActive = false;
 let observer = null;
-let filteredPosts = 0; // Counter for filtered posts
+let politicalFilteredPosts = 0; // Counter for political filtered posts
+let videoFilteredPosts = 0; // Counter for video filtered posts
 let processedPosts = new Set(); // Track processed post IDs
 let processingInProgress = false; // Flag to prevent concurrent processing
 let debugPanelVisible = false; // Control debug panel visibility
@@ -72,7 +73,13 @@ function hideVideoPosts() {
       
       // Hide the post
       postContainer.style.display = 'none';
+      videoFilteredPosts++; // Increment video filtered count
       console.log('[X Filter] Hiding post with video');
+      
+      // Update debug panel if visible
+      if (debugPanelVisible) {
+        updateDebugPanel();
+      }
     }
   });
 }
@@ -121,11 +128,15 @@ async function processPoliticalPosts() {
     const isPolitical = await analyzePoliticalContent(textContent);
     
     if (isPolitical) {
-      filteredPosts++;
+      politicalFilteredPosts++; // Increment political filtered count
       // Hide the post
       post.style.display = 'none';
       console.log('[X Filter] Hiding political post');
-      console.log('[X Filter] Analyzing text:', textContent.substring(0, 100) + '...');
+      
+      // Update debug panel if visible
+      if (debugPanelVisible) {
+        updateDebugPanel();
+      }
     }
   }
 }
@@ -231,7 +242,9 @@ function addDebugPanel() {
     <div id="x-filter-debug-content">
       <p>Video Filter: <span id="video-filter-status">Inactive</span></p>
       <p>Political Filter: <span id="political-filter-status">Inactive</span></p>
-      <p>Posts Filtered: <span id="filtered-count">0</span></p>
+      <p>Videos Filtered: <span id="video-filtered-count">0</span></p>
+      <p>Political Posts Filtered: <span id="political-filtered-count">0</span></p>
+      <p>Total Posts Filtered: <span id="total-filtered-count">0</span></p>
     </div>
   `;
   
@@ -251,9 +264,17 @@ function addDebugPanel() {
 
 // Update the debug panel with current stats
 function updateDebugPanel() {
-  document.getElementById('video-filter-status').textContent = isVideoRemovalActive ? 'Active' : 'Inactive';
-  document.getElementById('political-filter-status').textContent = isPoliticalFilterActive ? 'Active' : 'Inactive';
-  document.getElementById('filtered-count').textContent = filteredPosts;
+  const videoStatus = document.getElementById('video-filter-status');
+  const politicalStatus = document.getElementById('political-filter-status');
+  const videoCount = document.getElementById('video-filtered-count');
+  const politicalCount = document.getElementById('political-filtered-count');
+  const totalCount = document.getElementById('total-filtered-count');
+  
+  if (videoStatus) videoStatus.textContent = isVideoRemovalActive ? 'Active' : 'Inactive';
+  if (politicalStatus) politicalStatus.textContent = isPoliticalFilterActive ? 'Active' : 'Inactive';
+  if (videoCount) videoCount.textContent = videoFilteredPosts;
+  if (politicalCount) politicalCount.textContent = politicalFilteredPosts;
+  if (totalCount) totalCount.textContent = videoFilteredPosts + politicalFilteredPosts;
 }
 
 // Listen for messages from the popup
@@ -274,6 +295,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       stopObserver();
     }
     
+    // Update debug panel if visible
+    if (debugPanelVisible) {
+      updateDebugPanel();
+    }
+    
     sendResponse({ success: true, active: isVideoRemovalActive });
   } else if (request.action === 'togglePoliticalFilter') {
     isPoliticalFilterActive = !isPoliticalFilterActive;
@@ -284,6 +310,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       startObserver();
     } else {
       stopObserver();
+    }
+    
+    // Update debug panel if visible
+    if (debugPanelVisible) {
+      updateDebugPanel();
     }
     
     sendResponse({ success: true, active: isPoliticalFilterActive });
