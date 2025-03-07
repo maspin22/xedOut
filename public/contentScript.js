@@ -15,11 +15,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 var isVideoRemovalActive = false;
 var isPoliticalFilterActive = false;
 var observer = null;
-var politicalFilteredPosts = 0; // Counter for political filtered posts
-var videoFilteredPosts = 0; // Counter for video filtered posts
+var videoFilteredPosts = 0;
+var politicalFilteredPosts = 0;
 var processedPosts = new Set(); // Track processed post IDs
 var processingInProgress = false; // Flag to prevent concurrent processing
-var debugPanelVisible = false; // Control debug panel visibility
 function analyzePoliticalContent(_x) {
   return _analyzePoliticalContent.apply(this, arguments);
 }
@@ -105,13 +104,8 @@ function hideVideoPosts() {
 
       // Hide the post
       postContainer.style.display = 'none';
-      videoFilteredPosts++; // Increment video filtered count
+      videoFilteredPosts++;
       console.log('[X Filter] Hiding post with video');
-
-      // Update debug panel if visible
-      if (debugPanelVisible) {
-        updateDebugPanel();
-      }
     }
   });
 }
@@ -133,10 +127,7 @@ function getPostId(postElement) {
 }
 function processPoliticalPosts() {
   return _processPoliticalPosts.apply(this, arguments);
-}
-/**
- * Process all posts on the page based on active filters
- */
+} // Process all posts (both video and political)
 function _processPoliticalPosts() {
   _processPoliticalPosts = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
     var posts, _iterator, _step, post, postId, textContent, isPolitical;
@@ -177,15 +168,10 @@ function _processPoliticalPosts() {
         case 15:
           isPolitical = _context2.sent;
           if (isPolitical) {
-            politicalFilteredPosts++; // Increment political filtered count
+            politicalFilteredPosts++;
             // Hide the post
             post.style.display = 'none';
-            console.log('[X Filter] Hiding political post');
-
-            // Update debug panel if visible
-            if (debugPanelVisible) {
-              updateDebugPanel();
-            }
+            console.log('[X Filter] Hiding political post', textContent);
           }
         case 17:
           _context2.next = 4;
@@ -211,10 +197,7 @@ function _processPoliticalPosts() {
 }
 function processAllPosts() {
   return _processAllPosts.apply(this, arguments);
-}
-/**
- * Starts the content filtering functionality.
- */
+} // Start observing the DOM for changes
 function _processAllPosts() {
   _processAllPosts = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
     return _regeneratorRuntime().wrap(function _callee3$(_context3) {
@@ -228,9 +211,12 @@ function _processAllPosts() {
         case 2:
           processingInProgress = true;
           _context3.prev = 3;
+          // Process video posts if that filter is active
           if (isVideoRemovalActive) {
             hideVideoPosts();
           }
+
+          // Process political posts if that filter is active
           if (!isPoliticalFilterActive) {
             _context3.next = 8;
             break;
@@ -238,47 +224,45 @@ function _processAllPosts() {
           _context3.next = 8;
           return processPoliticalPosts();
         case 8:
-          // Update debug panel if visible
-          if (debugPanelVisible) {
-            updateDebugPanel();
-          }
-        case 9:
-          _context3.prev = 9;
+          _context3.next = 13;
+          break;
+        case 10:
+          _context3.prev = 10;
+          _context3.t0 = _context3["catch"](3);
+          console.error('[X Filter] Error processing posts:', _context3.t0);
+        case 13:
+          _context3.prev = 13;
           processingInProgress = false;
-          return _context3.finish(9);
-        case 12:
+          return _context3.finish(13);
+        case 16:
         case "end":
           return _context3.stop();
       }
-    }, _callee3, null, [[3,, 9, 12]]);
+    }, _callee3, null, [[3, 10, 13, 16]]);
   }));
   return _processAllPosts.apply(this, arguments);
 }
 function startObserver() {
+  if (observer) return; // Observer already running
+
+  console.log('[X Filter] Starting observer');
+  observer = new MutationObserver(function (mutations) {
+    // Use a small delay to allow the DOM to settle
+    clearTimeout(window.processingTimeout);
+    window.processingTimeout = setTimeout(function () {
+      processAllPosts();
+    }, 500);
+  });
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
   // Initial processing
   processAllPosts();
-
-  // Set up a MutationObserver to watch for new posts being loaded dynamically.
-  if (!observer) {
-    observer = new MutationObserver(function (mutations) {
-      // Throttle processing to reduce performance impact
-      if (!processingInProgress) {
-        setTimeout(function () {
-          processAllPosts();
-        }, 1000);
-      }
-    });
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-    console.log('[X Filter] Observer started');
-  }
 }
 
-/**
- * Stops the active filtering functionality.
- */
+// Stop the observer
 function stopObserver() {
   // Stop the MutationObserver if active
   if (observer) {
@@ -288,66 +272,40 @@ function stopObserver() {
   }
 }
 
-// Add a debug panel to the page
-function addDebugPanel() {
-  // Create a toggle button instead of always showing the panel
-  var toggleButton = document.createElement('button');
-  toggleButton.id = 'x-filter-debug-toggle';
-  toggleButton.textContent = 'X Filter';
-  toggleButton.style.position = 'fixed';
-  toggleButton.style.bottom = '10px';
-  toggleButton.style.right = '10px';
-  toggleButton.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-  toggleButton.style.color = 'white';
-  toggleButton.style.padding = '5px 10px';
-  toggleButton.style.borderRadius = '5px';
-  toggleButton.style.zIndex = '9999';
-  toggleButton.style.fontSize = '12px';
-  toggleButton.style.border = 'none';
-  toggleButton.style.cursor = 'pointer';
-  document.body.appendChild(toggleButton);
+// Toggle video filter
+function toggleVideoFilter() {
+  isVideoRemovalActive = !isVideoRemovalActive;
+  console.log("[X Filter] Video removal ".concat(isVideoRemovalActive ? 'enabled' : 'disabled'));
 
-  // Create the debug panel (hidden by default)
-  var panel = document.createElement('div');
-  panel.id = 'x-filter-debug-panel';
-  panel.style.position = 'fixed';
-  panel.style.bottom = '45px';
-  panel.style.right = '10px';
-  panel.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-  panel.style.color = 'white';
-  panel.style.padding = '10px';
-  panel.style.borderRadius = '5px';
-  panel.style.zIndex = '9999';
-  panel.style.fontSize = '12px';
-  panel.style.maxWidth = '300px';
-  panel.style.display = 'none';
-  panel.innerHTML = "\n    <h3 style=\"margin: 0 0 5px 0;\">X Filter Debug</h3>\n    <div id=\"x-filter-debug-content\">\n      <p>Video Filter: <span id=\"video-filter-status\">Inactive</span></p>\n      <p>Political Filter: <span id=\"political-filter-status\">Inactive</span></p>\n      <p>Videos Filtered: <span id=\"video-filtered-count\">0</span></p>\n      <p>Political Posts Filtered: <span id=\"political-filtered-count\">0</span></p>\n      <p>Total Posts Filtered: <span id=\"total-filtered-count\">0</span></p>\n    </div>\n  ";
-  document.body.appendChild(panel);
+  // Start or stop the observer based on whether any filter is active
+  if (isVideoRemovalActive || isPoliticalFilterActive) {
+    startObserver();
+  } else {
+    stopObserver();
+  }
 
-  // Toggle debug panel when button is clicked
-  toggleButton.addEventListener('click', function () {
-    debugPanelVisible = !debugPanelVisible;
-    panel.style.display = debugPanelVisible ? 'block' : 'none';
-
-    // Update panel if it's now visible
-    if (debugPanelVisible) {
-      updateDebugPanel();
-    }
+  // Sync state with extension storage
+  chrome.storage.local.set({
+    videoFilterActive: isVideoRemovalActive
   });
 }
 
-// Update the debug panel with current stats
-function updateDebugPanel() {
-  var videoStatus = document.getElementById('video-filter-status');
-  var politicalStatus = document.getElementById('political-filter-status');
-  var videoCount = document.getElementById('video-filtered-count');
-  var politicalCount = document.getElementById('political-filtered-count');
-  var totalCount = document.getElementById('total-filtered-count');
-  if (videoStatus) videoStatus.textContent = isVideoRemovalActive ? 'Active' : 'Inactive';
-  if (politicalStatus) politicalStatus.textContent = isPoliticalFilterActive ? 'Active' : 'Inactive';
-  if (videoCount) videoCount.textContent = videoFilteredPosts;
-  if (politicalCount) politicalCount.textContent = politicalFilteredPosts;
-  if (totalCount) totalCount.textContent = videoFilteredPosts + politicalFilteredPosts;
+// Toggle political filter
+function togglePoliticalFilter() {
+  isPoliticalFilterActive = !isPoliticalFilterActive;
+  console.log("[X Filter] Political filter ".concat(isPoliticalFilterActive ? 'enabled' : 'disabled'));
+
+  // Start or stop the observer based on whether any filter is active
+  if (isVideoRemovalActive || isPoliticalFilterActive) {
+    startObserver();
+  } else {
+    stopObserver();
+  }
+
+  // Sync state with extension storage
+  chrome.storage.local.set({
+    politicalFilterActive: isPoliticalFilterActive
+  });
 }
 
 // Listen for messages from the popup
@@ -358,39 +316,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       politicalActive: isPoliticalFilterActive
     });
   } else if (request.action === 'toggleVideoRemoval') {
-    isVideoRemovalActive = !isVideoRemovalActive;
-    console.log("[X Filter] Video removal ".concat(isVideoRemovalActive ? 'enabled' : 'disabled'));
-
-    // Start or stop the observer based on whether any filter is active
-    if (isVideoRemovalActive || isPoliticalFilterActive) {
-      startObserver();
-    } else {
-      stopObserver();
-    }
-
-    // Update debug panel if visible
-    if (debugPanelVisible) {
-      updateDebugPanel();
-    }
+    toggleVideoFilter();
     sendResponse({
       success: true,
       active: isVideoRemovalActive
     });
   } else if (request.action === 'togglePoliticalFilter') {
-    isPoliticalFilterActive = !isPoliticalFilterActive;
-    console.log("[X Filter] Political filter ".concat(isPoliticalFilterActive ? 'enabled' : 'disabled'));
-
-    // Start or stop the observer based on whether any filter is active
-    if (isVideoRemovalActive || isPoliticalFilterActive) {
-      startObserver();
-    } else {
-      stopObserver();
-    }
-
-    // Update debug panel if visible
-    if (debugPanelVisible) {
-      updateDebugPanel();
-    }
+    togglePoliticalFilter();
     sendResponse({
       success: true,
       active: isPoliticalFilterActive
@@ -399,9 +331,27 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   return true; // Indicates async response
 });
 
+// Load saved filter states
+function loadSavedFilterStates() {
+  chrome.storage.local.get(['videoFilterActive', 'politicalFilterActive'], function (result) {
+    if (result.videoFilterActive !== undefined) {
+      isVideoRemovalActive = result.videoFilterActive;
+    }
+    if (result.politicalFilterActive !== undefined) {
+      isPoliticalFilterActive = result.politicalFilterActive;
+    }
+
+    // Start observer if any filter is active
+    if (isVideoRemovalActive || isPoliticalFilterActive) {
+      startObserver();
+    }
+    console.log("[X Filter] Loaded saved states - Video: ".concat(isVideoRemovalActive, ", Political: ").concat(isPoliticalFilterActive));
+  });
+}
+
 // Initial setup when the script loads
 console.log('[X Content Filter] Content script loaded');
-addDebugPanel();
+loadSavedFilterStates();
 
 // Process posts on initial load with a small delay
 setTimeout(function () {

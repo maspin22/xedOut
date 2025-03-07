@@ -1,37 +1,72 @@
 'use strict';
 
 // Initialize button states
-async function initializeButtons() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab) return;
+function initializeButtons() {
+  return _initializeButtons.apply(this, arguments);
+}
 
-  try {
-    chrome.tabs.sendMessage(tab.id, { action: 'getState' }, response => {
-      if (!chrome.runtime.lastError && response) {
-        updateButtonState('toggleBtn', response.videoActive);
-        updateButtonState('togglePoliticalBtn', response.politicalActive);
-      }
-    });
+function _initializeButtons() {
+  _initializeButtons = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+    var _yield$chrome$tabs$qu5, _yield$chrome$tabs$qu6, tab;
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
+        case 0:
+          _context3.next = 2;
+          return chrome.tabs.query({
+            active: true,
+            currentWindow: true
+          });
+        case 2:
+          _yield$chrome$tabs$qu5 = _context3.sent;
+          _yield$chrome$tabs$qu6 = _slicedToArray(_yield$chrome$tabs$qu5, 1);
+          tab = _yield$chrome$tabs$qu6[0];
+          if (tab) {
+            _context3.next = 7;
+            break;
+          }
+          return _context3.abrupt("return");
+        case 7:
+          try {
+            chrome.tabs.sendMessage(tab.id, {
+              action: 'getState'
+            }, function (response) {
+              if (!chrome.runtime.lastError && response) {
+                updateButtonState('toggleBtn', response.videoActive);
+                updateButtonState('togglePoliticalBtn', response.politicalActive);
+              }
+            });
 
-    // Load API key if exists
-    chrome.storage.local.get(['openaiKey'], function(result) {
-      if (result.openaiKey) {
-        document.getElementById('apiKeyInput').value = '********';
+            // Load API key if exists
+            chrome.storage.local.get(['openaiKey'], function (result) {
+              if (result.openaiKey) {
+                document.getElementById('apiKeyInput').value = '********';
+              }
+            });
+          } catch (error) {
+            console.error('Error initializing buttons:', error);
+          }
+        case 8:
+        case "end":
+          return _context3.stop();
       }
-    });
-  } catch (error) {
-    console.error('Error initializing buttons:', error);
-  }
+    }, _callee3);
+  }));
+  return _initializeButtons.apply(this, arguments);
 }
 
 function updateButtonState(buttonId, isActive) {
   const button = document.getElementById(buttonId);
-  if (buttonId === 'toggleBtn') {
-    button.textContent = isActive ? 'Video Removal Active' : 'Enable Video Removal';
-  } else if (buttonId === 'togglePoliticalBtn') {
-    button.textContent = isActive ? 'Political Filter Active' : 'Enable Political Filter';
-  }
+  button.textContent = isActive ? 'On' : 'Off';
   button.classList.toggle('active', isActive);
+  
+  // Update button style
+  if (isActive) {
+    button.style.backgroundColor = '#555';
+    button.style.color = '#fff';
+  } else {
+    button.style.backgroundColor = '#e0e0e0';
+    button.style.color = '#333';
+  }
 }
 
 // Save API Key

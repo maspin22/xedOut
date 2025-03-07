@@ -2,15 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>X Content Filter</title>
+    <title>X Filter</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
     <div class="app">
       <h1>X Filter</h1>
-      <div class="button-container">
-        <button id="toggleBtn" class="button">Enable Video Removal</button>
-        <button id="togglePoliticalBtn" class="button political">Enable Political Filter</button>
+      <div class="filter-row">
+        <span>Video Filter</span>
+        <button id="toggleBtn" class="toggle-button">Off</button>
+      </div>
+      <div class="filter-row">
+        <span>Political Filter</span>
+        <button id="togglePoliticalBtn" class="toggle-button">Off</button>
       </div>
       <div class="api-key-section">
         <input 
@@ -19,7 +23,7 @@
           class="api-input" 
           placeholder="OpenAI API Key"
         >
-        <button id="saveApiKey" class="button save-key">Save</button>
+        <button id="saveApiKey" class="save-button">Save</button>
       </div>
       <p class="info">Filtered content will be hidden from your timeline.</p>
     </div>
