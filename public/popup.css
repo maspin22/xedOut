@@ -188,11 +188,11 @@ h1 {
 }
 
 .save-button:hover {
-  background-color: #111111;
+  background-color: #ccc;
 }
 
 .save-button:active {
-  background-color: #bbb;
+  background-color: #5c5c5c;
 }
 
 #saveCustomPrompt {
