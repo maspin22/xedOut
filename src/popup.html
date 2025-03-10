@@ -2,34 +2,37 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>X Filter</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
     <div class="app">
-      <h1>X Filter</h1>
       <div class="filter-row">
         <span>Ad Filter</span>
-        <button id="toggleAdBtn" class="toggle-button">Off</button>
+        <button id="toggleAdBtn" class="toggle-button" role="switch" aria-checked="false">Off</button>
       </div>
 
       <div class="filter-row">
         <span>Video Filter</span>
-        <button id="toggleBtn" class="toggle-button">Off</button>
+        <button id="toggleBtn" class="toggle-button" role="switch" aria-checked="false">Off</button>
       </div>
 
       <div class="filter-row">
         <span>Custom Filter</span>
-        <button id="toggleCustomBtn" class="toggle-button">Off</button>
+        <button id="toggleCustomBtn" class="toggle-button" role="switch" aria-checked="false">Off</button>
       </div>
-
+      
       <div class="custom-filter-section">
         <label for="customFilterPrompt" class="prompt-label">Custom Filter Prompt:</label>
         <textarea 
           id="customFilterPrompt" 
           class="prompt-input" 
-          placeholder="Describe what content you want to filter..."
-          rows="3"
+          placeholder="Describe what content you want to filter (e.g., 'Analyze if the following content is political in nature.')"
+          rows="4"
+          autocapitalize="sentences"
+          autocomplete="off"
+          autocorrect="on"
         ></textarea>
         <button id="saveCustomPrompt" class="save-button">Save Prompt</button>
       </div>
@@ -40,10 +43,14 @@
           id="apiKeyInput" 
           class="api-input" 
           placeholder="OpenAI API Key"
+          autocapitalize="off"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
         >
         <button id="saveApiKey" class="save-button">Save</button>
       </div>
-      <p class="info">Filtered content will be hidden from your timeline.</p>
+      <p class="info">Filtered content will be hidden from your timeline. The custom filter uses AI to analyze both text and images.</p>
     </div>
     <script src="popup.js"></script>
   </body>
