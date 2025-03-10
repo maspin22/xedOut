@@ -1,59 +1,3 @@
-'use strict';
-
-// Initialize button states
-function initializeButtons() {
-  return _initializeButtons.apply(this, arguments);
-}
-
-function _initializeButtons() {
-  _initializeButtons = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-    var _yield$chrome$tabs$qu5, _yield$chrome$tabs$qu6, tab;
-    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-      while (1) switch (_context3.prev = _context3.next) {
-        case 0:
-          _context3.next = 2;
-          return chrome.tabs.query({
-            active: true,
-            currentWindow: true
-          });
-        case 2:
-          _yield$chrome$tabs$qu5 = _context3.sent;
-          _yield$chrome$tabs$qu6 = _slicedToArray(_yield$chrome$tabs$qu5, 1);
-          tab = _yield$chrome$tabs$qu6[0];
-          if (tab) {
-            _context3.next = 7;
-            break;
-          }
-          return _context3.abrupt("return");
-        case 7:
-          try {
-            chrome.tabs.sendMessage(tab.id, {
-              action: 'getState'
-            }, function (response) {
-              if (!chrome.runtime.lastError && response) {
-                updateButtonState('toggleBtn', response.videoActive);
-                updateButtonState('togglePoliticalBtn', response.politicalActive);
-              }
-            });
-
-            // Load API key if exists
-            chrome.storage.local.get(['openaiKey'], function (result) {
-              if (result.openaiKey) {
-                document.getElementById('apiKeyInput').value = '********';
-              }
-            });
-          } catch (error) {
-            console.error('Error initializing buttons:', error);
-          }
-        case 8:
-        case "end":
-          return _context3.stop();
-      }
-    }, _callee3);
-  }));
-  return _initializeButtons.apply(this, arguments);
-}
-
 function updateButtonState(buttonId, isActive) {
   const button = document.getElementById(buttonId);
   button.textContent = isActive ? 'On' : 'Off';
@@ -69,13 +13,93 @@ function updateButtonState(buttonId, isActive) {
   }
 }
 
+async function initializeButtons() {
+  try {
+    // First try to get states from storage directly
+    const result = await new Promise(resolve => {
+      chrome.storage.local.get(['videoFilterActive', 'customFilterActive', 'adFilterActive', 'customFilterPrompt'], resolve);
+    });
+    
+    // Update buttons based on stored values
+    if (result.videoFilterActive !== undefined) {
+      updateButtonState('toggleBtn', result.videoFilterActive);
+    }
+    
+    if (result.customFilterActive !== undefined) {
+      updateButtonState('toggleCustomBtn', result.customFilterActive);
+    }
+    
+    if (result.adFilterActive !== undefined) {
+      updateButtonState('toggleAdBtn', result.adFilterActive);
+    }
+    
+    // Load custom filter prompt if exists
+    if (result.customFilterPrompt) {
+      document.getElementById('customFilterPrompt').value = result.customFilterPrompt;
+    }
+    
+    // Then try to get states from content script (which may be more up-to-date)
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tab) {
+      chrome.tabs.sendMessage(tab.id, { action: 'getState' }, response => {
+        if (!chrome.runtime.lastError && response) {
+          updateButtonState('toggleBtn', response.videoActive);
+          updateButtonState('toggleCustomBtn', response.customActive);
+          if (response.adActive !== undefined) {
+            updateButtonState('toggleAdBtn', response.adActive);
+          }
+        }
+      });
+      
+      // Get custom filter prompt from content script
+      chrome.tabs.sendMessage(tab.id, { action: 'getCustomFilterPrompt' }, response => {
+        if (!chrome.runtime.lastError && response && response.prompt) {
+          document.getElementById('customFilterPrompt').value = response.prompt;
+        }
+      });
+    }
+    
+    // Load API key if exists
+    chrome.storage.local.get(['openaiKey'], function(result) {
+      if (result.openaiKey) {
+        console.log(result.openaiKey);
+        document.getElementById('apiKeyInput').value = '********';
+      }
+    });
+  } catch (error) {
+    console.error('Error initializing buttons:', error);
+  }
+}
+
 // Save API Key
-document.getElementById('saveApiKey').addEventListener('click', () => {
+document.getElementById('saveApiKey').addEventListener('click', function() {
   const apiKey = document.getElementById('apiKeyInput').value;
   if (apiKey && apiKey !== '********') {
     chrome.storage.local.set({ openaiKey: apiKey }, function() {
       document.getElementById('apiKeyInput').value = '********';
     });
+  }
+});
+
+// Save Custom Filter Prompt
+document.getElementById('saveCustomPrompt').addEventListener('click', async function() {
+  const prompt = document.getElementById('customFilterPrompt').value;
+  if (prompt) {
+    // Save to storage
+    chrome.storage.local.set({ customFilterPrompt: prompt });
+    
+    // Send to content script
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab) {
+        chrome.tabs.sendMessage(tab.id, { 
+          action: 'updateCustomFilterPrompt', 
+          prompt: prompt 
+        });
+      }
+    } catch (error) {
+      console.error('Error updating prompt:', error);
+    }
   }
 });
 
@@ -97,17 +121,35 @@ document.getElementById('toggleBtn').addEventListener('click', async () => {
   }
 });
 
-// Political filter toggle
-document.getElementById('togglePoliticalBtn').addEventListener('click', async () => {
+// Custom filter toggle
+document.getElementById('toggleCustomBtn').addEventListener('click', async () => {
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (!tab) throw new Error('No active tab found');
     
-    chrome.tabs.sendMessage(tab.id, { action: 'togglePoliticalFilter' }, response => {
+    chrome.tabs.sendMessage(tab.id, { action: 'toggleCustomFilter' }, response => {
       if (chrome.runtime.lastError) {
         console.error('Error:', chrome.runtime.lastError);
       } else {
-        updateButtonState('togglePoliticalBtn', response.active);
+        updateButtonState('toggleCustomBtn', response.active);
+      }
+    });
+  } catch (error) {
+    console.error('Error:', error);
+  }
+});
+
+// Ad filter toggle
+document.getElementById('toggleAdBtn').addEventListener('click', async () => {
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab) throw new Error('No active tab found');
+    
+    chrome.tabs.sendMessage(tab.id, { action: 'toggleAdFilter' }, response => {
+      if (chrome.runtime.lastError) {
+        console.error('Error:', chrome.runtime.lastError);
+      } else {
+        updateButtonState('toggleAdBtn', response.active);
       }
     });
   } catch (error) {
@@ -116,4 +158,4 @@ document.getElementById('togglePoliticalBtn').addEventListener('click', async ()
 });
 
 // Initialize when popup opens
-document.addEventListener('DOMContentLoaded', initializeButtons); 
+document.addEventListener('DOMContentLoaded', initializeButtons);

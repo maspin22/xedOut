@@ -9,13 +9,31 @@
     <div class="app">
       <h1>X Filter</h1>
       <div class="filter-row">
+        <span>Ad Filter</span>
+        <button id="toggleAdBtn" class="toggle-button">Off</button>
+      </div>
+
+      <div class="filter-row">
         <span>Video Filter</span>
         <button id="toggleBtn" class="toggle-button">Off</button>
       </div>
+
       <div class="filter-row">
-        <span>Political Filter</span>
-        <button id="togglePoliticalBtn" class="toggle-button">Off</button>
+        <span>Custom Filter</span>
+        <button id="toggleCustomBtn" class="toggle-button">Off</button>
       </div>
+
+      <div class="custom-filter-section">
+        <label for="customFilterPrompt" class="prompt-label">Custom Filter Prompt:</label>
+        <textarea 
+          id="customFilterPrompt" 
+          class="prompt-input" 
+          placeholder="Describe what content you want to filter..."
+          rows="3"
+        ></textarea>
+        <button id="saveCustomPrompt" class="save-button">Save Prompt</button>
+      </div>
+      
       <div class="api-key-section">
         <input 
           type="password" 
